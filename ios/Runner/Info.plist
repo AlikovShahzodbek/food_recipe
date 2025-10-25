@@ -47,10 +47,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+<<<<<<< HEAD
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
     	<string>https</string>
     	<string>http</string>
 	</array>
+=======
+>>>>>>> e286462978215ff57f88bcd88a1cade73db75212
 </dict>
 </plist>

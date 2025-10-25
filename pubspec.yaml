@@ -36,6 +36,7 @@ dependencies:
   image_cropper: ^11.0.0
   get: ^4.7.2
   dio: ^5.9.0
+<<<<<<< HEAD
   url_launcher: ^6.3.2
   auto_size_text: ^3.0.0
   dotted_border: ^3.1.0
@@ -47,6 +48,11 @@ dependencies:
   isar_flutter_libs: ^3.1.0+1
   path_provider: ^2.1.5
   path: ^1.9.1
+=======
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+>>>>>>> e286462978215ff57f88bcd88a1cade73db75212
 
 dev_dependencies:
   flutter_test:
@@ -59,8 +65,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+<<<<<<< HEAD
   isar_generator: ^3.1.0+1
   build_runner: ^2.4.13
+=======
+>>>>>>> e286462978215ff57f88bcd88a1cade73db75212
 
 flutter_icons:
   android: true
@@ -110,7 +119,10 @@ flutter:
     - assets\icons\outlined_icons\share-outlined.svg
     - assets\icons\outlined_icons\star-outlined.svg
     - assets\icons\outlined_icons\timer-outlined.svg
+<<<<<<< HEAD
     - assets\icons\outlined_icons\plate-outlined.svg
+=======
+>>>>>>> e286462978215ff57f88bcd88a1cade73db75212
     - assets\icons\outlined_icons\favorite.svg
     - assets\icons\bold_icons\home-bold.svg
     - assets\icons\bold_icons\arrow-square-down.svg
