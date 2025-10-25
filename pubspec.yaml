@@ -1,0 +1,163 @@
+name: practick_project
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.2.1
+  shared_preferences: ^2.5.3
+  image_picker: ^1.2.0
+  image_cropper: ^11.0.0
+  get: ^4.7.2
+  dio: ^5.9.0
+  url_launcher: ^6.3.2
+  auto_size_text: ^3.0.0
+  dotted_border: ^3.1.0
+  uuid: ^4.5.1
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.1.5
+  path: ^1.9.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.14.4
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^5.0.0
+  isar_generator: ^3.1.0+1
+  build_runner: ^2.4.13
+
+flutter_icons:
+  android: true
+  ios: true
+  windows: 
+    image_path: "assets/images/app_icon.png" 
+  macos: 
+    image_path: "assets/images/app_icon.png" 
+  web: 
+    image_path: "assets/images/app_icon.png"        
+  image_path: "assets/images/app_icon.png" 
+
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets\images\welcome_screen_background.png
+    - assets\images\chefs_hat.png
+    - assets\images\app_icon.png
+    - assets\icons\social_icons\facebook.svg
+    - assets\icons\social_icons\google.svg
+    - assets\icons\outlined_icons\home-outlined.svg
+    - assets\icons\outlined_icons\arrow-down.svg
+    - assets\icons\outlined_icons\arrow-right.svg
+    - assets\icons\outlined_icons\arrow-up.svg
+    - assets\icons\outlined_icons\bookmark-outlined.svg
+    - assets\icons\outlined_icons\document-favorite-outlined.svg
+    - assets\icons\outlined_icons\document-text-outlined.svg
+    - assets\icons\outlined_icons\filter-outlined.svg
+    - assets\icons\outlined_icons\location-outlined.svg
+    - assets\icons\outlined_icons\message-outlined.svg
+    - assets\icons\outlined_icons\more-outlined.svg
+    - assets\icons\outlined_icons\notification-outlined.svg
+    - assets\icons\outlined_icons\profile-outlined.svg
+    - assets\icons\outlined_icons\search-outlined.svg
+    - assets\icons\outlined_icons\setting-outlined.svg
+    - assets\icons\outlined_icons\share-outlined.svg
+    - assets\icons\outlined_icons\star-outlined.svg
+    - assets\icons\outlined_icons\timer-outlined.svg
+    - assets\icons\outlined_icons\plate-outlined.svg
+    - assets\icons\outlined_icons\favorite.svg
+    - assets\icons\bold_icons\home-bold.svg
+    - assets\icons\bold_icons\arrow-square-down.svg
+    - assets\icons\bold_icons\arrow-square-right.svg
+    - assets\icons\bold_icons\arrow-square-up.svg
+    - assets\icons\bold_icons\bookmark-bold.svg
+    - assets\icons\bold_icons\document-favorite-bold.svg
+    - assets\icons\bold_icons\document-text-bold.svg
+    - assets\icons\bold_icons\filter-bold.svg
+    - assets\icons\bold_icons\location-bold.svg
+    - assets\icons\bold_icons\message-bold.svg
+    - assets\icons\bold_icons\more-bold.svg
+    - assets\icons\bold_icons\notification-bold.svg
+    - assets\icons\bold_icons\profile-bold.svg
+    - assets\icons\bold_icons\search-bold.svg
+    - assets\icons\bold_icons\setting-bold.svg
+    - assets\icons\bold_icons\share-bold.svg
+    - assets\icons\bold_icons\star-bold.svg
+    - assets\icons\bold_icons\timer-bold.svg
+    - assets\icons\active_icons\home-active.svg
+    - assets\icons\active_icons\bookmark-active.svg
+    - assets\icons\active_icons\notification-active.svg
+    - assets\icons\active_icons\profile-active.svg
+
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
