@@ -22,8 +22,17 @@ class _FoodCardListState extends State<FoodCardList> {
 
   Future<void> loadMeals() async {
     final loadedMeals = await controller.getMeals();
+
+    final convertedMeals = loadedMeals.map((meal) {
+      return FoodCardContentModel(
+        title: meal.name,
+        cotegory: meal.cotegory,
+        image: meal.image,
+      );
+    }).toList();
+
     setState(() {
-      meals = loadedMeals;
+      meals = convertedMeals;
     });
   }
 

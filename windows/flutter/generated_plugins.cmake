@@ -4,11 +4,8 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
-<<<<<<< HEAD
   isar_flutter_libs
   url_launcher_windows
-=======
->>>>>>> e286462978215ff57f88bcd88a1cade73db75212
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
