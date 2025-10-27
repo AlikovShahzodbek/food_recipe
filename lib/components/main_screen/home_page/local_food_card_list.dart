@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:practick_project/components/main_screen/home_page/local_food_card.dart';
 import 'package:practick_project/db/controller/local_recipes_data_base.dart';
@@ -34,10 +32,10 @@ class LocalFoodCardList extends StatelessWidget {
             itemCount: recipes.length,
             itemBuilder: (context, index) {
               final recipe = recipes[index];
-              final imageWidget =
-                  (recipe.imagePath != null && recipe.imagePath!.isNotEmpty)
-                  ? Image.file(File(recipe.imagePath!), fit: BoxFit.cover)
-                  : Image.asset('assets/images/default_food.jpg');
+              // final imageWidget =
+              //     (recipe.imagePath != null && recipe.imagePath!.isNotEmpty)
+              //     ? Image.file(File(recipe.imagePath!), fit: BoxFit.cover)
+              //     : Image.asset('assets/images/default_food.jpg');
               return Padding(
                 padding: EdgeInsets.only(
                   left: index == 0 ? 20 : 0,
@@ -47,7 +45,12 @@ class LocalFoodCardList extends StatelessWidget {
                   title: recipe.name ?? 'No name',
                   category: recipe.category ?? 'No category',
                   area: recipe.area ?? 'No area',
-                  image: imageWidget,
+                  id: recipe.id ?? 0,
+                  instruction: recipe.instruction ?? '',
+                  ingredients: recipe.ingredients ?? [],
+                  measures: recipe.measures ?? [],
+                  videoUrl: recipe.videoUrl ?? '',
+                  image: recipe.imagePath ?? '',
                 ),
               );
             },

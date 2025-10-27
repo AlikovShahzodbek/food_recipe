@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:practick_project/Theme/colors.dart';
 import 'package:practick_project/db/controller/local_recipes_data_base.dart';
 import 'package:practick_project/routes/main_routes.dart';
+import 'package:practick_project/services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().initialize();
   final localDB = LocalRecipesDataBase();
-  runApp(MyApp(localDB: localDB,));
+  runApp(MyApp(localDB: localDB));
 }
 
 class MyApp extends StatelessWidget {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 
 class FoodContentModel {
@@ -50,6 +52,21 @@ class FoodContentModel {
       source: json['strSource'] ?? '',
       ingredients: ingraidents,
       measures: measures,
+    );
+  }
+
+  factory FoodContentModel.fromLocal(Map<String, dynamic> json) {
+    return FoodContentModel(
+      id: json['id']?.toString() ?? '',
+      name: json['name'] ?? '',
+      cotegory: json['category'] ?? '',
+      area: json['area'] ?? 'Local',
+      instruction: json['instruction'] ?? '',
+      image: Image.file(File(json['imagePath'] ?? ''), fit: BoxFit.cover),
+      video: json['videoUrl'] ?? '',
+      ingredients: (json['ingredients'] as List?)?.cast<String>() ?? [],
+      measures: (json['measures'] as List?)?.cast<String>() ?? [],
+      source: '',
     );
   }
 

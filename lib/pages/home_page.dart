@@ -59,9 +59,12 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               SizedBox(height: 20),
-              HomeFoodCardList(
-                selectedCountry: selectedArea,
-                selectedCategory: selectedCategory,
+              SizedBox(
+                
+                child: HomeFoodCardList(
+                  selectedCountry: selectedArea,
+                  selectedCategory: selectedCategory,
+                ),
               ),
               SizedBox(height: 10),
               Padding(

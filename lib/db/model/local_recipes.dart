@@ -23,11 +23,8 @@ class LocalRecipes {
    String? area;
    String? instruction;
 
-  @Enumerated(EnumType.name)
-   List<String>? ingredients; // Список ингредиентов
-
-  @Enumerated(EnumType.name)
-   List<String>? measures; // Список мер
+   List<String>? ingredients;
+   List<String>? measures; 
 
   String? imagePath;
   String? videoUrl;

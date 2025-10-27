@@ -7,6 +7,7 @@ import 'package:practick_project/components/main_screen/add_recipes_page/add_rec
 import 'package:practick_project/components/main_screen/add_recipes_page/add_recipes_ingradient_list.dart';
 import 'package:practick_project/db/controller/local_recipes_data_base.dart';
 import 'package:practick_project/db/model/local_recipes.dart';
+import 'package:practick_project/services/notification_service.dart';
 
 class AddRecipe extends StatefulWidget {
   const AddRecipe({super.key, required this.localDB});
@@ -51,7 +52,8 @@ class _AddRecipeState extends State<AddRecipe> {
       videoUrl: _videoUrl,
     );
 
-    // Сохраняем через экземпляр базы
+    final mealName = _nameController.text.trim();
+
     await widget.localDB.saveRecipe(recipe);
 
     if (!mounted) return;
@@ -62,6 +64,11 @@ class _AddRecipeState extends State<AddRecipe> {
 
     debugPrint(
       'Saved: Ingredients=${_ingredients.length}, Measures=${_measures.length}',
+    );
+
+    await NotificationService().showNotification(
+      title: 'Added new meal',
+      body: mealName,
     );
 
     // Сброс формы
@@ -217,9 +224,7 @@ class _AddRecipeState extends State<AddRecipe> {
                           ),
                         ),
                       ),
-                      onPressed: _isFormValid
-                          ? () => saveMeal()
-                          : null,
+                      onPressed: _isFormValid ? () => saveMeal() : null,
                       child: Text(
                         "Save a meal",
                         style: TextStyle(
@@ -232,6 +237,15 @@ class _AddRecipeState extends State<AddRecipe> {
                   ),
                 ),
                 SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () async {
+                    await NotificationService().showNotification(
+                      title: 'Test',
+                      body: 'Hello from Flutter',
+                    );
+                  },
+                  child: Text('Test Notification'),
+                ),
               ],
             ),
           ),
