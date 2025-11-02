@@ -1,40 +1,33 @@
-import 'package:isar/isar.dart';
+import 'dart:io';
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:practick_project/db/model/local_recipes.dart';
+import 'package:path/path.dart' as p;
+import 'package:practick_project/db/model/local_recipes_table.dart';
 
-class LocalRecipesDataBase {
-  static Isar? _isar;
+part 'local_recipes_data_base.g.dart';
 
-  static Future<Isar> getInstance() async {
-    if (_isar != null && _isar!.isOpen) return _isar!;
+@DriftDatabase(tables: [LocalRecipes])
+class LocalRecipesDatabase extends _$LocalRecipesDatabase {
+  LocalRecipesDatabase() : super(_openConnection());
 
+  @override
+  int get schemaVersion => 1;
+
+  Future<int> insertRecipe(LocalRecipesCompanion recipe) =>
+      into(localRecipes).insert(recipe);
+
+  Future<List<LocalRecipe>> getAllRecipes() => select(localRecipes).get();
+
+  Future<int> deleteAll() => delete(localRecipes).go();
+
+  Stream<List<LocalRecipe>> watchAllRecipes() => select(localRecipes).watch();
+}
+
+LazyDatabase _openConnection() {
+  return LazyDatabase(() async {
     final dir = await getApplicationDocumentsDirectory();
-
-    _isar = await Isar.open(
-      [LocalRecipesSchema],
-      directory: dir.path,
-      name: 'local_recipes',
-    );
-
-    return _isar!;
-  }
-
-  Future<void> saveRecipe(LocalRecipes recipe) async {
-    final isar = await getInstance();
-    await isar.writeTxn(() async {
-      await isar.localRecipes.put(recipe);
-    });
-  }
-
-  Future<List<LocalRecipes>> getAllRecipes() async {
-    final isar = await getInstance();
-    return await isar.localRecipes.where().findAll();
-  }
-
-  Future<void> clearAll() async {
-    final isar = await getInstance();
-    await isar.writeTxn(() async {
-      await isar.localRecipes.clear();
-    });
-  }
+    final file = File(p.join(dir.path, 'local_recipes.sqlite'));
+    return NativeDatabase.createInBackground(file);
+  });
 }

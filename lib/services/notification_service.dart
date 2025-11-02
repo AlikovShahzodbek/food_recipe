@@ -1,58 +1,64 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
-  // --- Singleton pattern ---
-  NotificationService._internal();
-  static final NotificationService _instance = NotificationService._internal();
-  factory NotificationService() => _instance;
-
-  final _notificationPlugin = FlutterLocalNotificationsPlugin();
-  bool _isInitialized = false;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
-    if (_isInitialized) return;
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const initSettingsAndroid = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
 
-    const initSettingsIOS = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-    const initSettings = InitializationSettings(
-      android: initSettingsAndroid,
-      iOS: initSettingsIOS,
-    );
-
-    await _notificationPlugin.initialize(initSettings);
-    _isInitialized = true;
+    await _requestPermissions();
   }
 
-  NotificationDetails _notificationDetails() {
-    return const NotificationDetails(
-      android: AndroidNotificationDetails(
-        'channel_id',
-        'Recipe Notification',
-        channelDescription: 'Recipe Notification Channel',
-        priority: Priority.high,
-        importance: Importance.max,
-      ),
-      iOS: DarwinNotificationDetails(),
-    );
+  Future<void> _requestPermissions() async {
+    // iOS
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >()
+        ?.requestPermissions(alert: true, badge: true, sound: true);
+
+    // macOS
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          MacOSFlutterLocalNotificationsPlugin
+        >()
+        ?.requestPermissions(alert: true, badge: true, sound: true);
+
+    // ✅ Android 13+
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
   }
 
   Future<void> showNotification({
-    int id = 0,
-    String? title,
-    String? body,
+    required String title,
+    required String body,
   }) async {
-    if (!_isInitialized) {
-      await initialize();
-    }
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'channel_id',
+          'channel_name',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
 
-    await _notificationPlugin.show(id, title, body, _notificationDetails());
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      title,
+      body,
+      notificationDetails,
+    );
   }
 }

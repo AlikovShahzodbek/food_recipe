@@ -9,7 +9,7 @@ import 'package:practick_project/routes/home_page_routes.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key, required this.localDB});
-  final LocalRecipesDataBase localDB;
+  final LocalRecipesDatabase localDB;
 
   @override
   State<MainScreen> createState() => _MainScreenState();

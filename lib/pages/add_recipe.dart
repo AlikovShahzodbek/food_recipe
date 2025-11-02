@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:practick_project/Theme/colors.dart';
 import 'package:practick_project/Theme/text_filed_theme.dart';
@@ -6,12 +9,11 @@ import 'package:practick_project/components/main_screen/add_recipes_page/add_rec
 import 'package:practick_project/components/main_screen/add_recipes_page/add_recipes_drop_down_button.dart';
 import 'package:practick_project/components/main_screen/add_recipes_page/add_recipes_ingradient_list.dart';
 import 'package:practick_project/db/controller/local_recipes_data_base.dart';
-import 'package:practick_project/db/model/local_recipes.dart';
 import 'package:practick_project/services/notification_service.dart';
 
 class AddRecipe extends StatefulWidget {
   const AddRecipe({super.key, required this.localDB});
-  final LocalRecipesDataBase localDB;
+  final LocalRecipesDatabase localDB;
 
   @override
   State<AddRecipe> createState() => _AddRecipeState();
@@ -22,6 +24,9 @@ class _AddRecipeState extends State<AddRecipe> {
   final _areaController = TextEditingController();
   final _instructionController = TextEditingController();
   int _resetKey = 0;
+  bool _isSaving = false;
+  double _progress = 0.0;
+  Timer? _progressTimer;
 
   String? _category;
   String? _imagePath;
@@ -41,48 +46,71 @@ class _AddRecipeState extends State<AddRecipe> {
   }
 
   void saveMeal() async {
-    final recipe = LocalRecipes(
-      name: _nameController.text.trim(),
-      category: _category,
-      area: _areaController.text.trim(),
-      instruction: _instructionController.text.trim(),
-      ingredients: _ingredients,
-      measures: _measures,
-      imagePath: _imagePath,
-      videoUrl: _videoUrl,
-    );
-
-    final mealName = _nameController.text.trim();
-
-    await widget.localDB.saveRecipe(recipe);
-
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text("Recipe saved successfully!")));
-
-    debugPrint(
-      'Saved: Ingredients=${_ingredients.length}, Measures=${_measures.length}',
-    );
-
-    await NotificationService().showNotification(
-      title: 'Added new meal',
-      body: mealName,
-    );
-
-    // Сброс формы
+    if (_isSaving) return;
     setState(() {
-      _nameController.clear();
-      _areaController.clear();
-      _instructionController.clear();
-      _category = null;
-      _imagePath = null;
-      _videoUrl = null;
-      _ingredients.clear();
-      _measures.clear();
-      _resetKey += 1;
+      _isSaving = true;
+      _progress = 0.0;
     });
+
+    _progressTimer = Timer.periodic(const Duration(milliseconds: 150), (timer) {
+      if (_progress < 0.9) {
+        setState(() {
+          _progress += 0.05;
+        });
+      }
+    });
+
+    try {
+      final mealName = _nameController.text.trim();
+
+      await widget.localDB.insertRecipe(
+        LocalRecipesCompanion.insert(
+          name: drift.Value(mealName),
+          category: drift.Value(_category),
+          area: drift.Value(_areaController.text.trim()),
+          instruction: drift.Value(_instructionController.text.trim()),
+          ingredients: drift.Value(_ingredients),
+          measures: drift.Value(_measures),
+          imagePath: drift.Value(_imagePath),
+          videoUrl: drift.Value(_videoUrl),
+        ),
+      );
+
+      _progressTimer?.cancel();
+      setState(() {
+        _progress = 1.0;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Recipe saved successfully!")),
+        );
+        await NotificationService().showNotification(
+          title: 'Added new meal',
+          body: mealName,
+        );
+      }
+
+      setState(() {
+        _nameController.clear();
+        _areaController.clear();
+        _instructionController.clear();
+        _category = null;
+        _imagePath = null;
+        _videoUrl = null;
+        _ingredients.clear();
+        _measures.clear();
+        _resetKey++;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Ошибка при сохранении: $e")));
+      }
+    } finally {
+      setState(() => _isSaving = false);
+    }
   }
 
   @override
@@ -103,7 +131,7 @@ class _AddRecipeState extends State<AddRecipe> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -225,27 +253,38 @@ class _AddRecipeState extends State<AddRecipe> {
                         ),
                       ),
                       onPressed: _isFormValid ? () => saveMeal() : null,
-                      child: Text(
-                        "Save a meal",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: _isSaving
+                          ? Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                LinearProgressIndicator(
+                                  value: _progress,
+                                  backgroundColor: Colors.white24,
+                                  color: Colors.white,
+                                  minHeight: 5,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Saving... ${(_progress * 100).toInt()}%",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : const Text(
+                              "Save a meal",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),
                 SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () async {
-                    await NotificationService().showNotification(
-                      title: 'Test',
-                      body: 'Hello from Flutter',
-                    );
-                  },
-                  child: Text('Test Notification'),
-                ),
               ],
             ),
           ),

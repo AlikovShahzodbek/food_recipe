@@ -4,24 +4,20 @@ import 'package:practick_project/db/controller/local_recipes_data_base.dart';
 
 class LocalFoodCardList extends StatelessWidget {
   const LocalFoodCardList({super.key, required this.localDB});
-  final LocalRecipesDataBase localDB;
+  final LocalRecipesDatabase localDB;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: localDB.getAllRecipes(),
+    return StreamBuilder(
+      stream: localDB.watchAllRecipes(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (snapshot.hasError) {
-          return Center(child: Text('Ошибка: ${snapshot.error}'));
-        }
-
-        final recipes = snapshot.data ?? [];
+        final recipes = snapshot.data!;
         if (recipes.isEmpty) {
-          return const Center(child: Text('Рецепты не найдены'));
+          return const Center(child: Text("No recipes found"));
         }
 
         return SizedBox(
@@ -32,10 +28,6 @@ class LocalFoodCardList extends StatelessWidget {
             itemCount: recipes.length,
             itemBuilder: (context, index) {
               final recipe = recipes[index];
-              // final imageWidget =
-              //     (recipe.imagePath != null && recipe.imagePath!.isNotEmpty)
-              //     ? Image.file(File(recipe.imagePath!), fit: BoxFit.cover)
-              //     : Image.asset('assets/images/default_food.jpg');
               return Padding(
                 padding: EdgeInsets.only(
                   left: index == 0 ? 20 : 0,
@@ -45,7 +37,7 @@ class LocalFoodCardList extends StatelessWidget {
                   title: recipe.name ?? 'No name',
                   category: recipe.category ?? 'No category',
                   area: recipe.area ?? 'No area',
-                  id: recipe.id ?? 0,
+                  id: recipe.id,
                   instruction: recipe.instruction ?? '',
                   ingredients: recipe.ingredients ?? [],
                   measures: recipe.measures ?? [],

@@ -15,7 +15,7 @@ class AppRoutes {
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
-  final LocalRecipesDataBase localDB = LocalRecipesDataBase();
+  final LocalRecipesDatabase localDB = LocalRecipesDatabase();
   switch (settings.name) {
     case AppRoutes.welcome:
       return MaterialPageRoute(builder: (_) => WelcomeScreen());

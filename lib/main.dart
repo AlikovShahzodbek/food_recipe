@@ -7,13 +7,13 @@ import 'package:practick_project/services/notification_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().initialize();
-  final localDB = LocalRecipesDataBase();
+  final localDB = LocalRecipesDatabase();
   runApp(MyApp(localDB: localDB));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.localDB});
-  final LocalRecipesDataBase localDB;
+  final LocalRecipesDatabase localDB;
 
   @override
   Widget build(BuildContext context) {

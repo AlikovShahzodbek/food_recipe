@@ -84,8 +84,8 @@ class _HomeFoodCardListState extends State<HomeFoodCardList> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 50),
+      return SizedBox(
+        height: 270,
         child: Center(
           child: CircularProgressIndicator(color: AppColors().primary100),
         ),
@@ -93,7 +93,10 @@ class _HomeFoodCardListState extends State<HomeFoodCardList> {
     }
 
     if (meals.isEmpty) {
-      return const Center(child: Text("Information not founded"));
+      return SizedBox(
+        height: 270,
+        child: const Center(child: Text("Information not founded")),
+      );
     }
     return SizedBox(
       height: 270,

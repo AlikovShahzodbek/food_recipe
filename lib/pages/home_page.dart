@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  LocalRecipesDataBase localDB = LocalRecipesDataBase();
+  LocalRecipesDatabase localDB = LocalRecipesDatabase();
 
   String selectedArea = 'All';
   String selectedCategory = "All";
