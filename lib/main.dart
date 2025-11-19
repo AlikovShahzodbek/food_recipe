@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:practick_project/Theme/colors.dart';
-import 'package:practick_project/db/controller/local_recipes_data_base.dart';
 import 'package:practick_project/routes/main_routes.dart';
 import 'package:practick_project/services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().initialize();
-  final localDB = LocalRecipesDatabase();
-  runApp(MyApp(localDB: localDB));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.localDB});
-  final LocalRecipesDatabase localDB;
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

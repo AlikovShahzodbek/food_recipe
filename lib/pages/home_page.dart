@@ -5,18 +5,14 @@ import 'package:practick_project/components/main_screen/home_page/custom_tab_bar
 import 'package:practick_project/components/main_screen/home_page/home_food_card_list.dart';
 import 'package:practick_project/components/main_screen/home_page/local_food_card_list.dart';
 import 'package:practick_project/components/main_screen/home_page/searcher_and_filter.dart';
-import 'package:practick_project/db/controller/local_recipes_data_base.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  LocalRecipesDatabase localDB = LocalRecipesDatabase();
-
   String selectedArea = 'All';
   String selectedCategory = "All";
 
@@ -60,7 +56,6 @@ class _HomePageState extends State<HomePage> {
               ),
               SizedBox(height: 20),
               SizedBox(
-                
                 child: HomeFoodCardList(
                   selectedCountry: selectedArea,
                   selectedCategory: selectedCategory,
@@ -79,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SizedBox(height: 10),
-              LocalFoodCardList(localDB: localDB),
+              LocalFoodCardList(),
             ],
           ),
         ),

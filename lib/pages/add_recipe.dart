@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:practick_project/Theme/colors.dart';
 import 'package:practick_project/Theme/text_filed_theme.dart';
@@ -8,12 +6,13 @@ import 'package:practick_project/components/main_screen/add_recipes_page/add_rec
 import 'package:practick_project/components/main_screen/add_recipes_page/add_recipe_youtube_video.dart';
 import 'package:practick_project/components/main_screen/add_recipes_page/add_recipes_drop_down_button.dart';
 import 'package:practick_project/components/main_screen/add_recipes_page/add_recipes_ingradient_list.dart';
-import 'package:practick_project/db/controller/local_recipes_data_base.dart';
+import 'package:practick_project/db/controller/local_recipe_db_controller.dart';
+import 'package:practick_project/db/controller/notifications_db_controller.dart';
+import 'package:practick_project/models/food_content_model.dart';
 import 'package:practick_project/services/notification_service.dart';
 
 class AddRecipe extends StatefulWidget {
-  const AddRecipe({super.key, required this.localDB});
-  final LocalRecipesDatabase localDB;
+  const AddRecipe({super.key});
 
   @override
   State<AddRecipe> createState() => _AddRecipeState();
@@ -27,12 +26,12 @@ class _AddRecipeState extends State<AddRecipe> {
   bool _isSaving = false;
   double _progress = 0.0;
   Timer? _progressTimer;
-
   String? _category;
   String? _imagePath;
   String? _videoUrl;
   List<String> _ingredients = [];
   List<String> _measures = [];
+  FoodContentModel? meal;
 
   bool get _isFormValid {
     return _nameController.text.trim().isNotEmpty &&
@@ -60,21 +59,23 @@ class _AddRecipeState extends State<AddRecipe> {
       }
     });
 
+    final recipeData = {
+      'name': _nameController.text.trim(),
+      'category': _category,
+      'area': _areaController.text.trim(),
+      'instruction': _instructionController.text.trim(),
+      'ingredients': _ingredients.join(','), // список → строку
+      'measures': _measures.join(','),
+      'imagePath': _imagePath,
+      'videoUrl': _videoUrl,
+    };
+
+    await LocalRecipeDbController().addRecipe(recipeData);
+
     try {
       final mealName = _nameController.text.trim();
-
-      await widget.localDB.insertRecipe(
-        LocalRecipesCompanion.insert(
-          name: drift.Value(mealName),
-          category: drift.Value(_category),
-          area: drift.Value(_areaController.text.trim()),
-          instruction: drift.Value(_instructionController.text.trim()),
-          ingredients: drift.Value(_ingredients),
-          measures: drift.Value(_measures),
-          imagePath: drift.Value(_imagePath),
-          videoUrl: drift.Value(_videoUrl),
-        ),
-      );
+      final mealCotegory = _category;
+      final recipeId = await LocalRecipeDbController().addRecipe(recipeData);
 
       _progressTimer?.cancel();
       setState(() {
@@ -86,8 +87,13 @@ class _AddRecipeState extends State<AddRecipe> {
           const SnackBar(content: Text("Recipe saved successfully!")),
         );
         await NotificationService().showNotification(
-          title: 'Added new meal',
-          body: mealName,
+          title: 'Added New Recipe: $mealName',
+          body: "Cotegory: $mealCotegory",
+        );
+        await NotificationsDbController().saveNotificationToDB(
+          type: 'added_meal',
+          mealId: recipeId.toString(),
+          mealName: mealName,
         );
       }
 
@@ -147,6 +153,7 @@ class _AddRecipeState extends State<AddRecipe> {
                 SizedBox(height: 10),
                 TextField(
                   controller: _nameController,
+                  onChanged: (_) => setState(() {}),
                   decoration: TextFiledTheme().textFiledTheme.copyWith(
                     hintText: "Enter Name Meal",
                     hintStyle: TextStyle(color: AppColors().grey3),
@@ -182,6 +189,7 @@ class _AddRecipeState extends State<AddRecipe> {
                 SizedBox(height: 10),
                 TextField(
                   controller: _areaController,
+                  onChanged: (_) => setState(() {}),
                   decoration: TextFiledTheme().textFiledTheme.copyWith(
                     hintText: "e.g. Italian",
                     hintStyle: TextStyle(color: AppColors().grey3),
@@ -199,6 +207,7 @@ class _AddRecipeState extends State<AddRecipe> {
                 SizedBox(height: 10),
                 TextField(
                   controller: _instructionController,
+                  onChanged: (_) => setState(() {}),
                   maxLines: 10,
                   decoration: TextFiledTheme().textFiledTheme.copyWith(
                     hintText: "Describe the cooking steps...",
@@ -224,14 +233,18 @@ class _AddRecipeState extends State<AddRecipe> {
                     AddRecipeFoto(
                       key: ValueKey('foto_$_resetKey'),
                       onSelectedImage: (String path) {
-                        _imagePath = path;
+                        setState(() {
+                          _imagePath = path;
+                        });
                       },
                     ),
                     SizedBox(width: 15),
                     AddRecipeYoutubeVideo(
                       key: ValueKey("video_$_resetKey"),
                       onSelectedVideo: (String url) {
-                        _videoUrl = url;
+                        setState(() {
+                          _videoUrl = url;
+                        });
                       },
                     ),
                   ],

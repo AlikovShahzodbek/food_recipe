@@ -1,29 +1,68 @@
-import 'dart:convert';
-import 'package:drift/drift.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
-class LocalRecipes extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text().nullable()();
-  TextColumn get category => text().nullable()();
-  TextColumn get area => text().nullable()();
-  TextColumn get instruction => text().nullable()();
-  // Drift не хранит List<String>, поэтому храним в JSON
-  TextColumn get ingredients => text().map(const StringListConverter()).nullable()();
-  TextColumn get measures => text().map(const StringListConverter()).nullable()();
-  TextColumn get imagePath => text().nullable()();
-  TextColumn get videoUrl => text().nullable()();
-}
+class LocalRecipesTable {
+  Database? _db;
 
-class StringListConverter extends TypeConverter<List<String>, String> {
-  const StringListConverter();
+  Future<Database> get database async {
+    if (_db != null) return _db!;
 
-  @override
-  List<String> fromSql(String fromDb) {
-    return (jsonDecode(fromDb) as List).cast<String>();
+    _db = await _initDb();
+    return _db!;
   }
 
-  @override
-  String toSql(List<String> value) {
-    return jsonEncode(value);
+  Future<Database> _initDb() async {
+    final dataPath = await getDatabasesPath();
+    final path = join(dataPath, 'local_recipe.db');
+
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE local_recipes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            category TEXT,
+            area TEXT,
+            instruction TEXT,
+            ingredients TEXT,
+            measures TEXT,
+            imagePath TEXT,
+            videoUrl TEXT
+          )
+        ''');
+      },
+    );
+  }
+
+  Future<int> insertRecipe(Map<String, dynamic> recipe) async {
+    var db = await database;
+    return await db.insert('local_recipes', recipe);
+  }
+
+  Future<List<Map<String, dynamic>>> getAllRecipes() async {
+    var db = await database;
+    return await db.query('local_recipes');
+  }
+
+  Future<int> delete(int id) async {
+    var db = await database;
+    return await db.delete('local_recipes', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<Map<String, Object?>?> getById(int id) async {
+    final db = await database;
+
+    final result = await db.query(
+      'local_recipes',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+    return null;
   }
 }

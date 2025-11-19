@@ -62,7 +62,7 @@ class CustomBottomNavBar extends StatelessWidget {
     );
   }
 
-  _navBarIcon(String active, String defolt, int index) {
+  InkWell _navBarIcon(String active, String defolt, int index) {
     final isActive = index == currentIndex;
     return InkWell(
       onTap: () => onTap(index),
@@ -82,7 +82,7 @@ class CustomBottomNavBar extends StatelessWidget {
     );
   }
 
-  _navBarButton(int index) {
+  GestureDetector _navBarButton(int index) {
     final bottomNavBarButtonDecoration = BoxDecoration(
       color: AppColors().primary100,
       shape: BoxShape.circle,

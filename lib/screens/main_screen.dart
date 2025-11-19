@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:practick_project/components/custom_bottom_nav_bar.dart';
-import 'package:practick_project/db/controller/local_recipes_data_base.dart';
 import 'package:practick_project/pages/add_recipe.dart';
 import 'package:practick_project/pages/favorites_page.dart';
 import 'package:practick_project/pages/notification_page.dart';
@@ -8,8 +7,7 @@ import 'package:practick_project/pages/profile_page.dart';
 import 'package:practick_project/routes/home_page_routes.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.localDB});
-  final LocalRecipesDatabase localDB;
+  const MainScreen({super.key,});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -82,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
               return MaterialPageRoute(builder: (_) => ProfilePage());
             case 4:
               return MaterialPageRoute(
-                builder: (_) => AddRecipe(localDB: widget.localDB),
+                builder: (_) => AddRecipe(),
               );
             default:
               return MaterialPageRoute(

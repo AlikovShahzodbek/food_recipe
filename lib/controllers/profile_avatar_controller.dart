@@ -24,6 +24,7 @@ class ProfileAvatarController {
     await prefs.remove("avatar_path");
   }
 
+  // ignore: strict_top_level_inference
   Future<void> pickImage(source) async {
     final picker = ImagePicker();
     final XFile? pickedFile = await picker.pickImage(source: source);

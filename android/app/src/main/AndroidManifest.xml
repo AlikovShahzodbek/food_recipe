@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <application
-        android:label="practick_project"
+        android:label="Food Recipe"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:practick_project/db/controller/notifications_db_controller.dart';
 import 'package:practick_project/models/favorites_model.dart';
 import 'package:practick_project/models/food_content_model.dart';
+import 'package:practick_project/services/notification_service.dart';
 
 class SaveButton extends StatefulWidget {
   const SaveButton({super.key, required this.meal});
@@ -28,16 +30,29 @@ final imageDecoration = BoxDecoration(
 class _SaveButtonState extends State<SaveButton> {
   bool isSaved = false;
 
-  void _toggleSave() {
-    setState(() {
-      if (isSaved) {
-        FavoritesModel.removeFavorite(widget.meal);
-        isSaved = false;
-      } else {
-        FavoritesModel.addFavorite(widget.meal);
-        isSaved = true;
-      }
-    });
+  Future<void> _toggleSave() async {
+    if (isSaved) return;
+    setState(() => isSaved = true);
+
+    final alreadySaved = FavoritesModel.isFavorite(widget.meal);
+
+    if (alreadySaved) {
+      FavoritesModel.removeFavorite(widget.meal);
+      isSaved = false;
+    } else {
+      FavoritesModel.addFavorite(widget.meal);
+      isSaved = true;
+      await NotificationService().showNotification(
+        title: 'Saved Recipe: ${widget.meal.name}',
+        body: 'Cotegory: ${widget.meal.cotegory}',
+      );
+      await NotificationsDbController().saveNotificationToDB(
+        type: 'saved_meal',
+        mealId: widget.meal.id,
+        mealName: widget.meal.name,
+      );
+    }
+    setState(() => isSaved = false);
   }
 
   @override

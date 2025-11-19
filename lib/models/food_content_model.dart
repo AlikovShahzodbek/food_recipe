@@ -56,6 +56,24 @@ class FoodContentModel {
   }
 
   factory FoodContentModel.fromLocal(Map<String, dynamic> json) {
+    List<String> normalize(dynamic value) {
+      if (value == null) return [];
+
+      // Если это уже List — конвертируем безопасно
+      if (value is List) {
+        return value.map((e) => e.toString()).toList();
+      }
+
+      // Если строка — разбиваем
+      if (value is String) {
+        if (value.trim().isEmpty) return [];
+        return value.split(',').map((e) => e.trim()).toList();
+      }
+
+      // Всё остальное — пустой список
+      return [];
+    }
+
     return FoodContentModel(
       id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
@@ -64,8 +82,8 @@ class FoodContentModel {
       instruction: json['instruction'] ?? '',
       image: Image.file(File(json['imagePath'] ?? ''), fit: BoxFit.cover),
       video: json['videoUrl'] ?? '',
-      ingredients: (json['ingredients'] as List?)?.cast<String>() ?? [],
-      measures: (json['measures'] as List?)?.cast<String>() ?? [],
+      ingredients: normalize(json['ingredients']),
+      measures: normalize(json['measures']),
       source: '',
     );
   }

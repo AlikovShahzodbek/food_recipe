@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:practick_project/db/controller/local_recipes_data_base.dart';
 import 'package:practick_project/pages/search_page.dart';
 import 'package:practick_project/screens/login_screen.dart';
 import 'package:practick_project/screens/main_screen.dart';
@@ -15,7 +14,6 @@ class AppRoutes {
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
-  final LocalRecipesDatabase localDB = LocalRecipesDatabase();
   switch (settings.name) {
     case AppRoutes.welcome:
       return MaterialPageRoute(builder: (_) => WelcomeScreen());
@@ -24,7 +22,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case AppRoutes.register:
       return MaterialPageRoute(builder: (_) => RegistrationScreen());
     case AppRoutes.main:
-      return MaterialPageRoute(builder: (_) => MainScreen(localDB: localDB));
+      return MaterialPageRoute(builder: (_) => MainScreen());
     case AppRoutes.search:
       return MaterialPageRoute(builder: (_) => SearchPage());
     default:

@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+
 class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -18,21 +19,18 @@ class NotificationService {
   }
 
   Future<void> _requestPermissions() async {
-    // iOS
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin
         >()
         ?.requestPermissions(alert: true, badge: true, sound: true);
 
-    // macOS
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
           MacOSFlutterLocalNotificationsPlugin
         >()
         ?.requestPermissions(alert: true, badge: true, sound: true);
 
-    // ✅ Android 13+
     if (await Permission.notification.isDenied) {
       await Permission.notification.request();
     }
@@ -55,7 +53,7 @@ class NotificationService {
     );
 
     await flutterLocalNotificationsPlugin.show(
-      0,
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
       title,
       body,
       notificationDetails,
