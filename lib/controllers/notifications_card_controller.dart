@@ -47,7 +47,11 @@ class NotificationsCardController {
 
     for (var item in filtered) {
       final mealId = int.tryParse(item['meal_id']) ?? 0;
-      final meal = await mealRepository.findMeal(mealId);
+      final mealMap = await localDB.getById(mealId);
+      FoodContentModel? meal;
+      if (mealMap != null) {
+        meal = FoodContentModel.fromLocal(mealMap);
+      }
 
       result.add(
         NotificationCardData(

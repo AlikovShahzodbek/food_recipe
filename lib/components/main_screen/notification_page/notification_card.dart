@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:practick_project/controllers/notifications_card_controller.dart';
+import 'package:practick_project/db/model/notification_table.dart';
 import 'package:practick_project/pages/food_page.dart';
 
 class NotificationCard extends StatelessWidget {
@@ -9,10 +10,12 @@ class NotificationCard extends StatelessWidget {
 
   final NotificationCardData data;
 
-  void _openFoodPage(BuildContext context) {
+  Future<void> _openFoodPage(BuildContext context) async {
     final meal = data.meal;
     if (meal != null) {
+      await NotificationTable().markAsRead(data.id);
       Navigator.of(
+        // ignore: use_build_context_synchronously
         context,
       ).push(MaterialPageRoute(builder: (_) => FoodPage(meal: meal)));
     } else {
