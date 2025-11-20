@@ -70,12 +70,9 @@ class _AddRecipeState extends State<AddRecipe> {
       'videoUrl': _videoUrl,
     };
 
-    await LocalRecipeDbController().addRecipe(recipeData);
-
     try {
       final mealName = _nameController.text.trim();
       final mealCotegory = _category;
-      final recipeId = await LocalRecipeDbController().addRecipe(recipeData);
 
       _progressTimer?.cancel();
       setState(() {
@@ -86,12 +83,13 @@ class _AddRecipeState extends State<AddRecipe> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Recipe saved successfully!")),
         );
+        final recipeId = await LocalRecipeDbController().addRecipe(recipeData);
         await NotificationService().showNotification(
           title: 'Added New Recipe: $mealName',
           body: "Cotegory: $mealCotegory",
         );
         await NotificationsDbController().saveNotificationToDB(
-          type: 'added_meal',
+          type: 'added_recipe',
           mealId: recipeId.toString(),
           mealName: mealName,
         );

@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:practick_project/models/food_content_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FavoritesModel {
+class FavoritesModel extends ChangeNotifier {
   static final List<FoodContentModel> _favorites = [];
   static final ValueNotifier<List<FoodContentModel>> notifier = ValueNotifier(
     _favorites,
@@ -32,11 +32,13 @@ class FavoritesModel {
   static void addFavorite(FoodContentModel item) {
     if (!_favorites.any((element) => element.id == item.id)) {
       _favorites.add(item);
+      FavoritesModel().saveFavorite();
     }
   }
 
   static void removeFavorite(FoodContentModel item) {
     _favorites.removeWhere((element) => element.id == item.id);
+    FavoritesModel().saveFavorite();
   }
 
   static bool isFavorite(FoodContentModel item) {

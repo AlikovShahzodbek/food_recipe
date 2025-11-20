@@ -17,16 +17,16 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
       overlayColor: WidgetStatePropertyAll(Colors.transparent),
       onTap: () {
         setState(() {
-          isChecked = !isChecked; // Меняем состояние при клике
+          isChecked = !isChecked; 
         });
       },
       child: Container(
-        width: 24, // Увеличиваем размер для удобства
-        height: 24, // Также увеличиваем высоту
+        width: 24, 
+        height: 24, 
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6), // Скругление углов
+          borderRadius: BorderRadius.circular(6), 
           border: Border.all(
-            color: AppColors().secondary100, // Цвет рамки
+            color: AppColors().secondary100,
             width: 1.5,
           ),
         ),
@@ -38,7 +38,7 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
                   size: 20,
                   fontWeight: FontWeight.bold,
                 ),
-              ) // Показываем галочку
+              ) 
             : null,
       ),
     );

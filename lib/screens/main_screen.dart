@@ -7,7 +7,7 @@ import 'package:practick_project/pages/profile_page.dart';
 import 'package:practick_project/routes/home_page_routes.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key,});
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -79,9 +79,7 @@ class _MainScreenState extends State<MainScreen> {
             case 3:
               return MaterialPageRoute(builder: (_) => ProfilePage());
             case 4:
-              return MaterialPageRoute(
-                builder: (_) => AddRecipe(),
-              );
+              return MaterialPageRoute(builder: (_) => AddRecipe());
             default:
               return MaterialPageRoute(
                 builder: (_) => Scaffold(body: Text('Page not found')),
