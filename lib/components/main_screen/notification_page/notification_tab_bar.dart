@@ -119,7 +119,7 @@ class _NotificationTabBarState extends State<NotificationTabBar> {
               ? const Center(child: CircularProgressIndicator())
               : currentList.isEmpty
               ? const Center(child: Text("No notifications"))
-              : NotificationCardList(items: currentList),
+              : NotificationCardList(),
         ),
       ],
     );

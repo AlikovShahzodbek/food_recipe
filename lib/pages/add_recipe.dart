@@ -8,7 +8,6 @@ import 'package:practick_project/components/main_screen/add_recipes_page/add_rec
 import 'package:practick_project/components/main_screen/add_recipes_page/add_recipes_ingradient_list.dart';
 import 'package:practick_project/db/controller/local_recipe_db_controller.dart';
 import 'package:practick_project/db/controller/notifications_db_controller.dart';
-import 'package:practick_project/models/food_content_model.dart';
 import 'package:practick_project/services/notification_service.dart';
 
 class AddRecipe extends StatefulWidget {
@@ -31,7 +30,6 @@ class _AddRecipeState extends State<AddRecipe> {
   String? _videoUrl;
   List<String> _ingredients = [];
   List<String> _measures = [];
-  FoodContentModel? meal;
 
   bool get _isFormValid {
     return _nameController.text.trim().isNotEmpty &&
@@ -40,11 +38,11 @@ class _AddRecipeState extends State<AddRecipe> {
         _instructionController.text.trim().isNotEmpty &&
         _ingredients.isNotEmpty &&
         _measures.isNotEmpty &&
-        (_imagePath != null && _imagePath!.isNotEmpty ||
-            _videoUrl != null && _videoUrl!.isNotEmpty);
+        ((_imagePath != null && _imagePath!.isNotEmpty) ||
+            (_videoUrl != null && _videoUrl!.isNotEmpty));
   }
 
-  void saveMeal() async {
+  Future<void> saveMeal() async {
     if (_isSaving) return;
     setState(() {
       _isSaving = true;
@@ -64,7 +62,7 @@ class _AddRecipeState extends State<AddRecipe> {
       'category': _category,
       'area': _areaController.text.trim(),
       'instruction': _instructionController.text.trim(),
-      'ingredients': _ingredients.join(','), // список → строку
+      'ingredients': _ingredients.join(','),
       'measures': _measures.join(','),
       'imagePath': _imagePath,
       'videoUrl': _videoUrl,
@@ -72,7 +70,7 @@ class _AddRecipeState extends State<AddRecipe> {
 
     try {
       final mealName = _nameController.text.trim();
-      final mealCotegory = _category;
+      final mealCategory = _category;
 
       _progressTimer?.cancel();
       setState(() {
@@ -80,14 +78,19 @@ class _AddRecipeState extends State<AddRecipe> {
       });
 
       if (mounted) {
+        final controller = LocalRecipeDbController(); 
+        final recipeId = await controller.addRecipe(recipeData);
+
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Recipe saved successfully!")),
         );
-        final recipeId = await LocalRecipeDbController().addRecipe(recipeData);
+
         await NotificationService().showNotification(
           title: 'Added New Recipe: $mealName',
-          body: "Cotegory: $mealCotegory",
+          body: "Category: $mealCategory",
         );
+
         await NotificationsDbController().saveNotificationToDB(
           type: 'added_recipe',
           mealId: recipeId.toString(),
@@ -95,6 +98,7 @@ class _AddRecipeState extends State<AddRecipe> {
         );
       }
 
+      // очистка формы
       setState(() {
         _nameController.clear();
         _areaController.clear();

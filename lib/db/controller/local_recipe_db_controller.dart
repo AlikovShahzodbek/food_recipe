@@ -2,6 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:practick_project/db/model/local_recipes_table.dart';
 
 class LocalRecipeDbController extends ChangeNotifier {
+  static final LocalRecipeDbController _instance =
+      LocalRecipeDbController._internal();
+  factory LocalRecipeDbController() => _instance;
+  LocalRecipeDbController._internal();
+
   final LocalRecipesTable _dbTable = LocalRecipesTable();
   List<Map<String, dynamic>> _recipes = [];
 

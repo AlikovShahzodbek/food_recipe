@@ -10,52 +10,54 @@ class LocalFoodCardList extends StatefulWidget {
 }
 
 class _LocalFoodCardListState extends State<LocalFoodCardList> {
-  List<Map<String, dynamic>> recipes = [];
+  final controller = LocalRecipeDbController();
 
   @override
   void initState() {
     super.initState();
-    loadRecipes();
-  }
-
-  Future<void> loadRecipes() async {
-    recipes = await LocalRecipeDbController().fetchAllRecipes();
-    setState(() {});
+    controller.fetchAllRecipes();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (recipes.isEmpty) {
-      return const Center(child: Text("No local recipes yet"));
-    }
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        final recipes = controller.recipes;
 
-    return SizedBox(
-      height: 200,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(top: 35),
-        itemCount: recipes.length,
-        itemBuilder: (context, index) {
-          final recipe = recipes[index];
-          return Padding(
-            padding: EdgeInsets.only(
-              left: index == 0 ? 20 : 0,
-              right: index == recipes.length - 1 ? 20 : 0,
-            ),
-            child: LocalFoodCard(
-              title: recipe['name'],
-              category: recipe['category'],
-              area: recipe['area'],
-              id: recipe['id'],
-              instruction: recipe['instruction'],
-              ingredients: recipe['ingredients'].split(','),
-              measures: recipe['measures'].split(','),
-              videoUrl: recipe['videoUrl'],
-              image: recipe['imagePath'],
-            ),
-          );
-        },
-      ),
+        if (recipes.isEmpty) {
+          return const Center(child: Text("No local recipes yet"));
+        }
+
+        return SizedBox(
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.only(top: 35),
+            itemCount: recipes.length,
+            itemBuilder: (context, index) {
+              final recipe = recipes[index];
+              return Padding(
+                padding: EdgeInsets.only(
+                  left: index == 0 ? 20 : 0,
+                  right: index == recipes.length - 1 ? 20 : 0,
+                ),
+                child: LocalFoodCard(
+                  title: recipe['name'],
+                  category: recipe['category'],
+                  area: recipe['area'],
+                  id: recipe['id'],
+                  instruction: recipe['instruction'],
+                  ingredients: recipe['ingredients'].split(','),
+                  measures: recipe['measures'].split(','),
+                  videoUrl: recipe['videoUrl'],
+                  image: recipe['imagePath'],
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
