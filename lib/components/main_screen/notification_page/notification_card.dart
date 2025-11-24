@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -74,6 +76,11 @@ class NotificationCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Meal ID: ${data.meal?.id ?? 'null'}, Instruction: ${data.meal?.instruction.substring(0, min(30, data.meal?.instruction.length ?? 0))}...',
+                      style: const TextStyle(fontSize: 12, color: Colors.red),
                     ),
                     const SizedBox(height: 4),
                     AutoSizeText(

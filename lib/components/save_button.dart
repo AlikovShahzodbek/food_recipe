@@ -46,6 +46,7 @@ class _SaveButtonState extends State<SaveButton> {
         title: 'Saved Recipe: ${widget.meal.name}',
         body: 'Cotegory: ${widget.meal.cotegory}',
       );
+
       await NotificationsDbController().saveNotificationToDB(
         type: 'saved_recipe',
         mealId: widget.meal.id,

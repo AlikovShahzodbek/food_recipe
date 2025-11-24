@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:practick_project/db/model/local_recipes_table.dart';
 import 'package:practick_project/db/model/notification_table.dart';
 import 'package:practick_project/models/food_content_model.dart';
@@ -36,21 +37,28 @@ class NotificationsCardController {
 
   Future<List<NotificationCardData>> load(NotificationsFilter filter) async {
     final notifList = await notificationDB.getAllNotifications();
-
     final filtered = notifList.where((item) {
       if (filter == NotificationsFilter.all) return true;
       if (filter == NotificationsFilter.read) return item['is_read'] == 1;
       return item['is_read'] == 0;
-    });
+    }).toList();
 
     final result = <NotificationCardData>[];
 
     for (var item in filtered) {
-      final mealId = int.tryParse(item['meal_id']) ?? 0;
-      final mealMap = await localDB.getById(mealId);
+      final mealId = item['meal_id'] as String;
       FoodContentModel? meal;
-      if (mealMap != null) {
-        meal = FoodContentModel.fromLocal(mealMap);
+
+      try {
+        // Пробуем найти рецепт в локальной базе
+        final mealMap = await localDB.getById(int.tryParse(mealId) ?? 0);
+        if (mealMap != null && mealMap.isNotEmpty) {
+          meal = FoodContentModel.fromLocal(mealMap);
+        } else {
+          meal = await mealRepository.findMeal(mealId as int);
+        }
+      } catch (e) {
+        Text(e.toString());
       }
 
       result.add(
@@ -58,12 +66,13 @@ class NotificationsCardController {
           id: item['id'] as int,
           type: item['type'] as String,
           isRead: item['is_read'] == 1,
-          createdAt: DateTime.parse(item['created_at']),
+          createdAt: DateTime.parse(item['created_at'] as String),
           meal: meal,
-          mealName: item['meal_name'],
+          mealName: item['meal_name'] as String,
         ),
       );
     }
+
     return result;
   }
 }
