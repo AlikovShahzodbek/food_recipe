@@ -1,9 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:practick_project/Theme/colors.dart';
-import 'package:practick_project/models/food_content_model.dart';
-import 'package:practick_project/pages/food_page.dart';
 
 class LocalFoodCard extends StatefulWidget {
   const LocalFoodCard({
@@ -11,7 +8,7 @@ class LocalFoodCard extends StatefulWidget {
     required this.title,
     required this.category,
     required this.area,
-    required this.id,
+    this.id,
     required this.instruction,
     required this.ingredients,
     required this.measures,
@@ -19,7 +16,7 @@ class LocalFoodCard extends StatefulWidget {
     required this.image,
   });
 
-  final int id;
+  final int? id;
   final String title;
   final String category;
   final String area;
@@ -34,23 +31,6 @@ class LocalFoodCard extends StatefulWidget {
 }
 
 class _LocalFoodCardState extends State<LocalFoodCard> {
-  void _openFoodPage() {
-    final meal = FoodContentModel.fromLocal({
-      'id': widget.id,
-      'name': widget.title,
-      'category': widget.category,
-      'area': widget.area,
-      'instruction': widget.instruction,
-      'imagePath': widget.image,
-      'videoUrl': widget.videoUrl,
-      'ingredients': widget.ingredients,
-      'measures': widget.measures,
-    });
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => FoodPage(meal: meal)));
-  }
-
   final titletextStyle = TextStyle(
     color: AppColors().black,
     fontWeight: FontWeight.bold,
@@ -65,7 +45,7 @@ class _LocalFoodCardState extends State<LocalFoodCard> {
       color: Colors.white,
     );
     return GestureDetector(
-      onTap: () => _openFoodPage(),
+      onTap: () {},
       child: Stack(
         clipBehavior: Clip.none,
         children: [

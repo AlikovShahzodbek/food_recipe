@@ -1,45 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:practick_project/components/main_screen/notification_page/notification_card.dart';
-import 'package:practick_project/controllers/notifications_card_controller.dart';
-import 'package:practick_project/db/controller/notifications_db_controller.dart';
+import 'package:practick_project/db/controllers/notifications_card_controller.dart';
 
-class NotificationCardList extends StatelessWidget {
+class NotificationCardList extends StatefulWidget {
   const NotificationCardList({super.key});
 
   @override
+  State<NotificationCardList> createState() => _NotificationCardListState();
+}
+
+class _NotificationCardListState extends State<NotificationCardList> {
+  void _update() {
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationsCardController.instance.addListener(_update);
+    NotificationsCardController.instance.load();
+  }
+
+  @override
+  void dispose() {
+    NotificationsCardController.instance.removeListener(_update);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = NotificationsDbController();
-    controller.fetchAllNotifications();
+    final notifications = NotificationsCardController.instance.notifications;
 
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, _) {
-        final notifications = controller.notifications;
+    if (notifications.isEmpty) {
+      return const Center(child: Text("No notifications yet"));
+    }
 
-        if (notifications.isEmpty) {
-          return const Center(child: Text("No notifications yet"));
-        }
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: notifications.length,
+      itemBuilder: (context, index) {
+        final notification = notifications[index];
 
-        final items = notifications.map((n) {
-          return NotificationCardData(
-            id: n['id'] as int,
-            type: n['type'] as String,
-            mealName: n['meal_name'] as String,
-            meal: null, // пока без загрузки блюда
-            isRead: (n['is_read'] as int) == 1,
-            createdAt: DateTime.parse(n['created_at'] as String),
-          );
-        }).toList();
-
-        // используем NotificationCard для дизайна
-        return ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: NotificationCard(data: items[index]),
-            );
-          },
+        return NotificationCard(
+          type: notification.type,
+          title: notification.title,
+          subtitle: notification.subtitle,
+          isRead: notification.isRead ? 1 : 0,
+          createdAt: notification.createdAt.toIso8601String(),
         );
       },
     );

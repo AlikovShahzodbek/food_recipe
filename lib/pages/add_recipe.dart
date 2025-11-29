@@ -6,8 +6,10 @@ import 'package:practick_project/components/main_screen/add_recipes_page/add_rec
 import 'package:practick_project/components/main_screen/add_recipes_page/add_recipe_youtube_video.dart';
 import 'package:practick_project/components/main_screen/add_recipes_page/add_recipes_drop_down_button.dart';
 import 'package:practick_project/components/main_screen/add_recipes_page/add_recipes_ingradient_list.dart';
-import 'package:practick_project/db/controller/local_recipe_db_controller.dart';
-import 'package:practick_project/db/controller/notifications_db_controller.dart';
+import 'package:practick_project/db/controllers/local_food_controller.dart';
+import 'package:practick_project/db/controllers/notifications_card_controller.dart';
+import 'package:practick_project/db/models/local_food_model.dart';
+import 'package:practick_project/db/models/notifications_card_model.dart';
 import 'package:practick_project/services/notification_service.dart';
 
 class AddRecipe extends StatefulWidget {
@@ -57,48 +59,48 @@ class _AddRecipeState extends State<AddRecipe> {
       }
     });
 
-    final recipeData = {
-      'name': _nameController.text.trim(),
-      'category': _category,
-      'area': _areaController.text.trim(),
-      'instruction': _instructionController.text.trim(),
-      'ingredients': _ingredients.join(','),
-      'measures': _measures.join(','),
-      'imagePath': _imagePath,
-      'videoUrl': _videoUrl,
-    };
-
     try {
-      final mealName = _nameController.text.trim();
-      final mealCategory = _category;
+      final newMeal = LocalFoodModel(
+        name: _nameController.text,
+        cotegory: _category!,
+        area: _areaController.text,
+        instruction: _instructionController.text,
+        image: _imagePath ?? '',
+        video: _videoUrl ?? '',
+        ingredients: _ingredients,
+        measures: _measures,
+      );
 
       _progressTimer?.cancel();
       setState(() {
         _progress = 1.0;
       });
 
-      if (mounted) {
-        final controller = LocalRecipeDbController(); 
-        final recipeId = await controller.addRecipe(recipeData);
+      final mealName = _nameController.text.trim();
+      final mealCategory = _category;
+      final mealInstruction = _instructionController.text.trim();
+      final mealId = await LocalFoodController.instance.add(newMeal);
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Recipe saved successfully!")),
+      );
 
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Recipe saved successfully!")),
-        );
+      await NotificationService().showNotification(
+        title: 'Added New Recipe: $mealName',
+        body: "Category: $mealCategory",
+      );
 
-        await NotificationService().showNotification(
-          title: 'Added New Recipe: $mealName',
-          body: "Category: $mealCategory",
-        );
+      await NotificationsCardController.instance.add(
+        NotificationsCardModel(
+          type: 'added_meal',
+          title: mealName,
+          subtitle: mealInstruction,
+          isRead: false,
+          createdAt: DateTime.now(),
+          mealId: mealId,
+        ),
+      );
 
-        await NotificationsDbController().saveNotificationToDB(
-          type: 'added_recipe',
-          mealId: recipeId.toString(),
-          mealName: mealName,
-        );
-      }
-
-      // очистка формы
       setState(() {
         _nameController.clear();
         _areaController.clear();

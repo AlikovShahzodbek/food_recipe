@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:practick_project/db/controller/notifications_db_controller.dart';
+import 'package:practick_project/db/controllers/notifications_card_controller.dart';
+import 'package:practick_project/db/models/notifications_card_model.dart';
 import 'package:practick_project/models/favorites_model.dart';
 import 'package:practick_project/models/food_content_model.dart';
 import 'package:practick_project/services/notification_service.dart';
@@ -42,15 +43,21 @@ class _SaveButtonState extends State<SaveButton> {
     } else {
       FavoritesModel.addFavorite(widget.meal);
       isSaved = true;
+
       await NotificationService().showNotification(
         title: 'Saved Recipe: ${widget.meal.name}',
-        body: 'Cotegory: ${widget.meal.cotegory}',
+        body: 'Category: ${widget.meal.cotegory}',
       );
 
-      await NotificationsDbController().saveNotificationToDB(
-        type: 'saved_recipe',
-        mealId: widget.meal.id,
-        mealName: widget.meal.name,
+      await NotificationsCardController.instance.add(
+        NotificationsCardModel(
+          type: 'saved_meal',
+          title: widget.meal.name,
+          subtitle: widget.meal.instruction,
+          isRead: false,
+          createdAt: DateTime.now(),
+          mealId: int.tryParse(widget.meal.id),
+        ),
       );
     }
     setState(() => isSaved = false);

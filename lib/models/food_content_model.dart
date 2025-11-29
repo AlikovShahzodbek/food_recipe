@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/widgets.dart';
 
 class FoodContentModel {
@@ -55,38 +53,6 @@ class FoodContentModel {
     );
   }
 
-  factory FoodContentModel.fromLocal(Map<String, dynamic> json) {
-    List<String> normalize(dynamic value) {
-      if (value == null) return [];
-
-      // Если это уже List — конвертируем безопасно
-      if (value is List) {
-        return value.map((e) => e.toString()).toList();
-      }
-
-      // Если строка — разбиваем
-      if (value is String) {
-        if (value.trim().isEmpty) return [];
-        return value.split(',').map((e) => e.trim()).toList();
-      }
-
-      // Всё остальное — пустой список
-      return [];
-    }
-
-    return FoodContentModel(
-      id: json['id']?.toString() ?? '',
-      name: json['name'] ?? '',
-      cotegory: json['category'] ?? '',
-      area: json['area'] ?? 'Local',
-      instruction: json['instruction'] ?? '',
-      image: Image.file(File(json['imagePath'] ?? ''), fit: BoxFit.cover),
-      video: json['videoUrl'] ?? '',
-      ingredients: normalize(json['ingredients']),
-      measures: normalize(json['measures']),
-      source: '',
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {
